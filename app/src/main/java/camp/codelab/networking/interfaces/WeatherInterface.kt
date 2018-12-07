@@ -1,5 +1,6 @@
-package camp.codelab.networking
+package camp.codelab.networking.interfaces
 
+import camp.codelab.networking.models.City
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

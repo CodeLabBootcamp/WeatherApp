@@ -1,11 +1,17 @@
-package camp.codelab.networking
+package camp.codelab.networking.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Toast
+import camp.codelab.networking.R
+import camp.codelab.networking.adapters.CityAdapter
+import camp.codelab.networking.interfaces.WeatherInterface
+import camp.codelab.networking.models.City
+import camp.codelab.networking.utils.Consts
 import kotlinx.android.synthetic.main.activity_search.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,8 +25,15 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        openActivityButton.setOnClickListener {
 
-        searchQueryEditText.addTextChangedListener(object: TextWatcher{
+            val intent = Intent(this, CityInfoActivity::class.java)
+
+            startActivity(intent)
+
+        }
+
+        searchQueryEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 searchCities(s.toString())
             }
@@ -40,25 +53,25 @@ class SearchActivity : AppCompatActivity() {
     fun searchCities(searchQuery: String) {
 
         val retrofit = Retrofit.Builder()
-                .baseUrl(Consts.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
+            .baseUrl(Consts.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
         val weatherInterface = retrofit.create(WeatherInterface::class.java)
 
         weatherInterface.searchForCity(searchQuery)
-                .enqueue(object : Callback<List<City>> {
-                    override fun onFailure(call: Call<List<City>>, t: Throwable) {
-                        Toast.makeText(this@SearchActivity, t.message, Toast.LENGTH_LONG).show()
-                    }
+            .enqueue(object : Callback<List<City>> {
+                override fun onFailure(call: Call<List<City>>, t: Throwable) {
+                    Toast.makeText(this@SearchActivity, t.message, Toast.LENGTH_LONG).show()
+                }
 
-                    override fun onResponse(call: Call<List<City>>, response: Response<List<City>>) {
-                        response.body()?.let { cityList ->
-                            prepareRecyclerView(cityList)
-                        }
+                override fun onResponse(call: Call<List<City>>, response: Response<List<City>>) {
+                    response.body()?.let { cityList ->
+                        prepareRecyclerView(cityList)
                     }
+                }
 
-                })
+            })
     }
 
     fun prepareRecyclerView(cityList: List<City>) {

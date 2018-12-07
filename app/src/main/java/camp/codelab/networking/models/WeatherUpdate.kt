@@ -1,4 +1,4 @@
-package camp.codelab.networking
+package camp.codelab.networking.models
 
 import com.google.gson.annotations.SerializedName
 
